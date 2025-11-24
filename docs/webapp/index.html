@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Мини‑приложение Telegram — Пример</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width:800px; margin:20px auto; padding:10px; }
+    .card { border:1px solid #ddd; padding:16px; border-radius:8px; }
+    button { padding:8px 12px; font-size:16px; }
+    pre { background:#f8f8f8; padding:8px; border-radius:6px; overflow:auto; }
+  </style>
+</head>
+<body>
+  <h1>Пример мини‑приложения (Web App)</h1>
+  <div class="card">
+    <p id="info">Инициализация...</p>
+    <pre id="raw"></pre>
+    <button id="closeBtn">Закрыть</button>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    const infoEl = document.getElementById('info');
+    const rawEl = document.getElementById('raw');
+    const closeBtn = document.getElementById('closeBtn');
+
+    if (!tg) {
+      infoEl.textContent = 'Этот файл должен быть открыт внутри Telegram (Web App).';
+    } else {
+      try { tg.expand?.(); } catch(e) {}
+      const user = (tg.initDataUnsafe && tg.initDataUnsafe.user) || null;
+      const initData = tg.initData || '';
+      infoEl.innerHTML = `
+        <b>Пользователь:</b> ${user ? ((user.first_name||'') + ' ' + (user.last_name||'') + ' (' + (user.username||'-') + ')') : 'нет данных'}<br/>
+      `;
+      rawEl.textContent = 'initData (коротко): ' + String(initData).slice(0,1000) + (String(initData).length>1000 ? '...' : '');
+      closeBtn.addEventListener('click', () => tg.close());
+    }
+  </script>
+</body>
+</html>
